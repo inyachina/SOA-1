@@ -66,7 +66,7 @@ paths:
                 type: array
                 items: 
                   $ref: '#/components/schemas/Lab'   
-        '400':
+        '500':  
           description: Something went wrong
           content:
             application/json:
@@ -234,19 +234,19 @@ paths:
                 type: object
                 properties:
                   averageMinimalPoint:
-                    type: integer
-        '400':
-          description: Something went wrong
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'     
+                    type: integer    
         '404':
           description: There is not a single lab
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'  
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse' 
   /lab/groupByPersonalQualities:
     get:
       tags:
@@ -270,18 +270,18 @@ paths:
                       type: array
                       items:
                         $ref: '#/components/schemas/Lab'   
-        '400':
-          description: Something went wrong
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse' 
         '404':  
           description: There is not a single lab
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse' 
   /lab/fiterByDescription/{substring}:
     get:
       tags:
@@ -304,18 +304,19 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Lab'   
-        '400':  
-          description: Something went wrong
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse' 
+  
         '404':  
           description: There is not a single lab
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
+        '500':  
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse' 
   /user:
     post:
       tags:
