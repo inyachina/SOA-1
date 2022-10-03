@@ -2,8 +2,11 @@ openapi: 3.0.3
 info:
   title: LabWork API
   description: |-
-    Сервис ориентированная архитектура. Лабораторная №1
+    Service oriented architecture Lab1
   version: 1.0.0
+  license:
+    name: Report link
+    url: 'https://docs.google.com/document/d/1OFOUjKmVXs_EV1YSgSl1qN2sRwAZeqoU/edit?usp=sharing&ouid=103372480510558009952&rtpof=true&sd=true'
 servers:
   - url: https://se.ifmo.ru/~s283945/soa/bars
 tags:
@@ -42,6 +45,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse' 
+        '404':
+          description: Lab not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse' 
         '500':
           description: Validation exception
           content:
@@ -68,6 +77,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Lab'   
+        '204':
+          description: No hardcore labs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse' 
         '400':
           description: Invalid ID supplied
           content:
@@ -201,10 +216,10 @@ components:
         application/xml:
           schema:
             $ref: '#/components/schemas/Lab'
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-security:
-  - bearerAuth: []
+#   securitySchemes:
+#     bearerAuth:
+#       type: http
+#       scheme: bearer
+#       bearerFormat: JWT
+# security:
+#   - bearerAuth: []
