@@ -2,15 +2,19 @@ openapi: 3.0.3
 info:
   title: LabWork API
   description: |-
-    Сервис ориентированная архитектура. Лабораторная №1
+    Service oriented architecture Lab1
   version: 1.0.0
+  license:
+    name: Report link
+    url: 'https://docs.google.com/document/d/1OFOUjKmVXs_EV1YSgSl1qN2sRwAZeqoU/edit?usp=sharing&ouid=103372480510558009952&rtpof=true&sd=true'
+
 servers:
   - url: https://se.ifmo.ru/~s283945/soa
 tags:
   - name: lab
     description: Everything about labs
-  - name: user
-    description: Operations about user
+  - name: lab additional
+    description: Extended lab funcionality
 paths:
   /labs:
     get:
@@ -50,12 +54,20 @@ paths:
           explode: true
           schema:
             type: boolean
+            default: true
         - name: filter
           in: query
-          description: Set filter substring
+          description: You need to specify a field, the default value is "name".
+           You should specify "regex", the collection will be filtered by the specified field and by the specified regular expression.
           explode: true
           schema:
-            type: string
+            type: object
+            properties:
+              field:
+                type: string
+                default: name
+              regex: 
+                type: string
           
       responses:
         '200':
@@ -65,14 +77,55 @@ paths:
               schema:
                 type: array
                 items: 
-                  $ref: '#/components/schemas/Lab'   
-        '500':  
+                  $ref: '#/components/schemas/Lab' 
+        '204':
+          description: Empty collection
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/ApiResponse'
+        '500':
           description: Something went wrong
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'     
-  /lab/{id}:
+                $ref: '#/components/schemas/ApiResponse'
+    post: 
+      tags:
+        - lab
+      summary: Add new lab
+      operationId: addLab
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Lab'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Lab'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lab'   
+        '405':
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'  
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /labs/{id}:
     get:
       tags:
         - lab
@@ -104,7 +157,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'   
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
     put:
       tags:
         - lab
@@ -151,7 +210,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'    
+                $ref: '#/components/schemas/ApiResponse'  
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
     delete:
       tags:
         - lab
@@ -167,11 +232,7 @@ paths:
             type: integer
       responses:
         '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Lab'   
+          description: Successful operation 
         '400':
           description: Invalid ID supplied
           content:
@@ -183,45 +244,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'   
-  /lab:
-    post: 
-      tags:
-        - lab
-      summary: Add new lab
-      operationId: addLab
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Lab'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Lab'
-        required: true
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Lab'   
-        '400':
-          description: Invalid ID supplied
-          content:
-            application/json:
-              schema:
                 $ref: '#/components/schemas/ApiResponse' 
-        '405':
-          description: Validation exception
+        '500':
+          description: Something went wrong
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'    
-  /lab/averageMinimalPoint :
+                $ref: '#/components/schemas/ApiResponse'  
+  /labs/average/minimal_point :
     get:
       tags:
-        - lab
+        - lab additional
       summary: Get an average Minimal Point of labs
       operationId: averageMinimalPoint
 
@@ -234,23 +267,37 @@ paths:
                 type: object
                 properties:
                   averageMinimalPoint:
-                    type: integer    
+                    type: integer
+        '204':
+          description: Empty collection
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'     
         '404':
           description: There is not a single lab
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'  
+                $ref: '#/components/schemas/ApiResponse' 
         '500':
           description: Something went wrong
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse' 
-  /lab/groupByPersonalQualities:
+                $ref: '#/components/schemas/ApiResponse'
+  /labs/group_by/personal_qualities:
     get:
       tags:
-        - lab
+        - lab additional
       summary: Group labs by personal qualities maximum 
       operationId: groupByPersonalQualities
 
@@ -270,6 +317,20 @@ paths:
                       type: array
                       items:
                         $ref: '#/components/schemas/Lab'   
+        '204':
+          description: Empty collection
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse' 
         '404':  
           description: There is not a single lab
           content:
@@ -281,18 +342,22 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse' 
-  /lab/fiterByDescription/{substring}:
+                $ref: '#/components/schemas/ApiResponse'
+  /labs/fiter_by/description:
     get:
       tags:
-        - lab
+        - lab additional
       summary: Find all labs that description includes subsring
       operationId: fiterByDescription
       parameters:
+        - name: filterRegex
+          in: query
+          description: Set regex that filters all labs by description
+          schema:
+            type: string
         - name: substring
-          in: path
-          description: Set subsring that filters all labs by description
-          required: true
+          in: query
+          description: Set substring that filters all labs by description
           schema:
             type: string
       responses:
@@ -304,202 +369,32 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Lab'   
-  
+        '204':
+          description: Empty collection
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/ApiResponse'
+        '400':  
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse' 
         '404':  
           description: There is not a single lab
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-        '500':  
+        '500':
           description: Something went wrong
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse' 
-  /user:
-    post:
-      tags:
-        - user
-      summary: Create user
-      description: This can only be done by the logged in user.
-      operationId: createUser
-      requestBody:
-        description: Created user object
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        default:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-  /user/createWithList:
-    post:
-      tags:
-        - user
-      summary: Creates list of users with given input array
-      description: Creates list of users with given input array
-      operationId: createUsersWithListInput
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/User'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-        default:
-          description: successful operation
-  /user/login:
-    get:
-      tags:
-        - user
-      summary: Logs user into the system
-      description: ''
-      operationId: loginUser
-      parameters:
-        - name: username
-          in: query
-          description: The user name for login
-          required: false
-          schema:
-            type: string
-        - name: password
-          in: query
-          description: The password for login in clear text
-          required: false
-          schema:
-            type: string
-      responses:
-        '200':
-          description: successful operation
-          headers:
-            X-Rate-Limit:
-              description: calls per hour allowed by the user
-              schema:
-                type: integer
-                format: int32
-            X-Expires-After:
-              description: date in UTC when token expires
-              schema:
-                type: string
-                format: date-time
-          content:
-            application/xml:
-              schema:
-                type: string
-            application/json:
-              schema:
-                type: string
-        '400':
-          description: Invalid username/password supplied
-  /user/logout:
-    get:
-      tags:
-        - user
-      summary: Logs out current logged in user session
-      description: ''
-      operationId: logoutUser
-      parameters: []
-      responses:
-        default:
-          description: successful operation
-  /user/{username}:
-    get:
-      tags:
-        - user
-      summary: Get user by user name
-      description: ''
-      operationId: getUserByName
-      parameters:
-        - name: username
-          in: path
-          description: 'The name that needs to be fetched. Use user1 for testing. '
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-        '400':
-          description: Invalid username supplied
-        '404':
-          description: User not found
-    put:
-      tags:
-        - user
-      summary: Update user
-      description: This can only be done by the logged in user.
-      operationId: updateUser
-      parameters:
-        - name: username
-          in: path
-          description: name that need to be deleted
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Update an existent user in the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        default:
-          description: successful operation
-    delete:
-      tags:
-        - user
-      summary: Delete user
-      description: This can only be done by the logged in user.
-      operationId: deleteUser
-      parameters:
-        - name: username
-          in: path
-          description: The name that needs to be deleted
-          required: true
-          schema:
-            type: string
-      responses:
-        '400':
-          description: Invalid username supplied
-        '404':
-          description: User not found
+                $ref: '#/components/schemas/ApiResponse'
 components:
   schemas:
     Lab:
@@ -585,57 +480,12 @@ components:
           example: 2
       xml:
         name: address
-    # LabFields:
-    #   type: string
-    #   enum:
-    #     - name
-    #     - x
-    #     - y
-    #     - creationDate
-    #     - minimalPoint
-    #     - personalQualitiesMaximum
-    #     - description
-    #     - difficulty
-    #     - disciplineName
-    #     - disciplineLectureHours
-    #     - disciplineSelfStudyHours
-    User:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 10
-        username:
-          type: string
-          example: theUser
-        firstName:
-          type: string
-          example: John
-        lastName:
-          type: string
-          example: James
-        email:
-          type: string
-          example: john@email.com
-        password:
-          type: string
-          example: '12345'
-        phone:
-          type: string
-          example: '12345'
-        userStatus:
-          type: integer
-          description: User Status
-          format: int32
-          example: 1
-      xml:
-        name: user
     ApiResponse:
       type: object
       properties:
         code:
           type: integer
+          default: 0
           format: int32
         type:
           type: string
@@ -653,18 +503,3 @@ components:
         application/xml:
           schema:
             $ref: '#/components/schemas/Lab'
-    UserArray:
-      description: List of user object
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/User'
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-security:
-  - bearerAuth: []
